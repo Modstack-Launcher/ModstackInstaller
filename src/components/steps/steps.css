@@ -1,0 +1,632 @@
+/* ── Big step header (replaces TitleBar-based step-title) ── */
+.step-title-lg {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ms-text);
+  margin-bottom: 6px;
+}
+
+.step-subtitle-lg {
+  font-size: 14px;
+  color: var(--ms-text-muted);
+  max-width: 480px;
+  line-height: 1.5;
+}
+
+/* ── Action cards (Instalar / Reparar / Desinstalar) ── */
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.action-card {
+  background: var(--ms-bg-2);
+  border: 1px solid var(--ms-border);
+  border-radius: 10px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-body);
+  transition: all 0.15s ease;
+}
+
+.action-card:hover {
+  border-color: var(--ms-blue-dim);
+  background: var(--ms-bg-3);
+}
+
+.action-card.selected {
+  border-color: var(--ms-blue);
+  background: var(--ms-blue-glow);
+  box-shadow: 0 0 0 1px var(--ms-blue) inset;
+}
+
+.action-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--ms-bg-3);
+  border: 1px solid var(--ms-border-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ms-blue-bright);
+}
+
+.action-card.selected .action-card-icon {
+  background: var(--ms-blue);
+  border-color: var(--ms-blue);
+  color: #fff;
+}
+
+.action-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ms-text);
+}
+
+.action-card-desc {
+  font-size: 12px;
+  color: var(--ms-text-muted);
+  line-height: 1.4;
+}
+
+/* ── Welcome ── */
+.welcome-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.welcome-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+
+.welcome-logo-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  filter: drop-shadow(0 0 16px rgba(75,119,231,0.5));
+}
+
+.welcome-logo-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.welcome-logo-mod   { color: var(--ms-blue-bright); }
+.welcome-logo-stack { color: var(--ms-text); }
+
+.welcome-tagline {
+  font-size: 13px;
+  color: var(--ms-text-muted);
+  line-height: 1.7;
+  max-width: 360px;
+}
+
+.welcome-features {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.welcome-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+}
+
+.welcome-feature:hover {
+  background: var(--ms-bg-2);
+  border-color: var(--ms-border);
+}
+
+.feature-icon-wrap {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(75, 119, 231, 0.1);
+  border: 1px solid rgba(75, 119, 231, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.feature-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ms-text);
+  margin-bottom: 2px;
+}
+
+.feature-desc {
+  font-size: 12px;
+  color: var(--ms-text-muted);
+}
+
+/* ── Banner strip ── */
+.welcome-banner {
+  background: linear-gradient(135deg, rgba(75,119,231,0.08), rgba(75,119,231,0.03));
+  border: 1px solid rgba(75,119,231,0.2);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--ms-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.welcome-banner-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ms-blue);
+  box-shadow: 0 0 6px var(--ms-blue);
+  flex-shrink: 0;
+}
+
+/* ── License ── */
+.license-box {
+  background: var(--ms-bg-2);
+  border: 1px solid var(--ms-border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  height: 220px;
+  overflow-y: auto;
+  font-size: 11.5px;
+  color: var(--ms-text-muted);
+  line-height: 1.8;
+  white-space: pre-wrap;
+  font-family: 'Inter', monospace;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ms-border-2) transparent;
+  margin-bottom: 14px;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.license-box::-webkit-scrollbar { width: 4px; }
+.license-box::-webkit-scrollbar-thumb { background: var(--ms-border-2); border-radius: 2px; }
+
+/* ── Install dir ── */
+.install-section {
+  margin-bottom: 20px;
+}
+
+.install-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ms-text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.dir-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(75,119,231,0.05);
+  border: 1px solid rgba(75,119,231,0.15);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--ms-text-muted);
+  margin-top: 8px;
+}
+
+.dir-preview-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ── Installing ── */
+.installing-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 20px;
+  text-align: center;
+}
+
+.installing-spinner {
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--ms-border-2);
+  border-top-color: var(--ms-blue);
+  border-right-color: var(--ms-blue-bright);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.installing-task {
+  font-size: 12px;
+  color: var(--ms-text-muted);
+  min-height: 18px;
+}
+
+
+
+
+/* ── Finish ── */
+.finish-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 14px;
+  text-align: center;
+}
+
+.finish-check {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(75,119,231,0.1);
+  border: 2px solid var(--ms-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  animation: checkPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-shadow: 0 0 30px var(--ms-blue-glow);
+}
+
+@keyframes checkPop {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Error ── */
+.error-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 14px;
+  text-align: center;
+  padding: 32px;
+}
+
+.error-icon {
+  font-size: 36px;
+}
+
+.error-box {
+  background: rgba(248, 113, 113, 0.07);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 11.5px;
+  color: var(--ms-red);
+  font-family: monospace;
+  word-break: break-all;
+  max-width: 100%;
+  text-align: left;
+}
+
+/* ── InstallingStep redesign ── */
+.installing-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 0;
+}
+
+.installing-header {
+  padding: 24px 32px 0;
+  flex-shrink: 0;
+}
+
+.installing-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  flex: 1;
+  padding: 28px 32px 0;
+}
+
+.installing-ring {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--ms-bg-2);
+  border: 1px solid var(--ms-border-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 30px rgba(75,119,231,0.08);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.installing-ring.done {
+  border-color: rgba(74,222,128,0.4);
+  box-shadow: 0 0 30px rgba(74,222,128,0.15);
+}
+
+.installing-spin {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--ms-border-2);
+  border-top-color: var(--ms-blue);
+  border-right-color: var(--ms-blue-bright);
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.installing-task-label {
+  font-size: 12px;
+  color: var(--ms-text-muted);
+  letter-spacing: 0.02em;
+  min-height: 18px;
+  text-align: center;
+}
+
+.installing-progress-wrap {
+  padding: 0 32px;
+  flex-shrink: 0;
+  margin-top: 24px;
+}
+
+.installing-progress-track {
+  width: 100%;
+  height: 3px;
+  background: var(--ms-bg-4);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.installing-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--ms-blue-dim), var(--ms-blue-bright));
+  border-radius: 2px;
+  transition: width 0.35s ease;
+  box-shadow: 0 0 8px rgba(75,119,231,0.5);
+}
+
+.installing-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--ms-text-muted);
+}
+
+/* Log */
+
+
+.installing-log-wrap::-webkit-scrollbar { width: 3px; }
+.installing-log-wrap::-webkit-scrollbar-thumb { background: var(--ms-border-2); border-radius: 2px; }
+
+.installing-log-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--ms-text-muted);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  line-height: 1.8;
+}
+
+.installing-log-line .log-prefix {
+  flex-shrink: 0;
+  width: 12px;
+  color: var(--ms-border-2);
+}
+
+.installing-log-line.ok    .log-prefix { color: var(--ms-green); }
+.installing-log-line.warn  .log-prefix { color: var(--ms-yellow); }
+.installing-log-line.error .log-prefix { color: var(--ms-red); }
+.installing-log-line.ok    { color: var(--ms-text-dim); }
+.installing-log-line.error { color: var(--ms-red); }
+
+/* ── InstallingStep rediseño ── */
+.installing-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+  background: var(--ms-bg);
+  overflow: hidden;
+}
+
+.installing-root .step-header {
+  padding: 24px 28px 16px;
+  flex-shrink: 0;
+}
+
+.installing-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--ms-bg-2);
+  border: 1px solid var(--ms-border-2);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 0 28px;
+  flex-shrink: 0;
+}
+
+.installing-card-left {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+}
+
+.installing-spinner {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--ms-border-2);
+  border-top-color: var(--ms-blue);
+  border-right-color: var(--ms-blue-bright);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.installing-done-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(74, 222, 128, 0.1);
+  border: 2px solid var(--ms-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ms-green);
+  font-size: 20px;
+  font-weight: 700;
+  animation: checkPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.2);
+}
+
+.installing-card-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.installing-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ms-text);
+}
+
+.installing-task {
+  font-size: 12px;
+  color: var(--ms-text-muted);
+  min-height: 16px;
+}
+
+.installing-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.installing-progress-wrap .progress-bar-track {
+  flex: 1;
+}
+
+.installing-pct {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ms-blue-bright);
+  min-width: 30px;
+  text-align: right;
+}
+
+/* Log section — flex:1 so it fills remaining space */
+.installing-log-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background: var(--ms-bg-2);
+  border: 1px solid var(--ms-border);
+  border-radius: 10px;
+  margin: 16px 28px 16px;
+  overflow: hidden;
+}
+
+.installing-log-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ms-text-muted);
+  border-bottom: 1px solid var(--ms-border);
+  background: var(--ms-bg-3);
+  flex-shrink: 0;
+}
+
+.installing-log-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ms-blue);
+  box-shadow: 0 0 6px var(--ms-blue);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.installing-log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ms-border-2) transparent;
+}
+
+.log-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ms-text-dim);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  line-height: 1.8;
+}
+
+.log-prefix {
+  flex-shrink: 0;
+  width: 12px;
+  text-align: center;
+}
+
+.log-line.ok    { color: var(--ms-green-dim); }
+.log-line.warn  { color: var(--ms-yellow); }
+.log-line.error { color: var(--ms-red); }
+
+.installing-root .step-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+}

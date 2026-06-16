@@ -1,0 +1,43 @@
+.lang-selector {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ms-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.lang-btn:hover {
+  background: var(--ms-bg-3);
+  color: var(--ms-text-dim);
+}
+
+.lang-btn.active {
+  background: rgba(75, 119, 231, 0.12);
+  border-color: rgba(75, 119, 231, 0.25);
+  color: var(--ms-blue-bright);
+}
+
+.lang-flag {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.lang-label {
+  font-size: 10px;
+}
