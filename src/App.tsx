@@ -43,6 +43,14 @@ export default function App() {
   const [os, setOs] = useState<string>("");
   const [javaVersion, setJavaVersion] = useState<string>("");
   const [diskSpace, setDiskSpace] = useState<string>("");
+  const [version, setVersion] = useState("...");
+  
+  useEffect(() => {
+    fetch("https://api.github.com/repos/Modstack-Launcher/ModstackApp/releases/latest")
+      .then((r) => r.json())
+      .then((data) => setVersion(data.tag_name.replace(/^v/, "")))
+      .catch(() => setVersion("?.?.?"));
+  }, []);
 
   useEffect(() => {
     try { setOs(platform()); } catch(_) {}
@@ -83,8 +91,7 @@ export default function App() {
       {step === "splash" && (
         <SplashScreen
           onDone={() => goTo("welcome")}
-          version="1.1.5"
-          commitHash="a1b2c3d"
+          version={version}
         />
       )}
 

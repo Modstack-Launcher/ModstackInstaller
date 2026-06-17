@@ -17,7 +17,6 @@ pub async fn detect_or_install_java(
     Err("Java 21+ not found. The launcher will download it on first run.".to_string())
 }
 
-/// Returns the major version of a system-installed Java 21+ if present (e.g. "21").
 pub fn detect_java_version() -> Option<String> {
     let java = find_system_java()?;
     get_java_version(&java).ok().map(|v| v.to_string())

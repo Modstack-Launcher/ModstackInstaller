@@ -3,6 +3,7 @@ import iconImg from "../assets/icon.png";
 import type { InstallerStep } from "../App";
 import LangSelector from "./LangSelector";
 import { useTranslation } from "../i18n/useTranslation";
+import { useState, useEffect } from "react";
 
 interface Props {
   step: InstallerStep;
@@ -14,10 +15,17 @@ interface Props {
 export default function Sidebar({ javaVersion, diskSpace }: Props) {
   const { t } = useTranslation();
   const osLabel = "Windows";
+  const [version, setVersion] = useState("...");
+  
+  useEffect(() => {
+    fetch("https://api.github.com/repos/Modstack-Launcher/ModstackApp/releases/latest")
+      .then((r) => r.json())
+      .then((data) => setVersion(data.tag_name.replace(/^v/, "")))
+      .catch(() => setVersion("?.?.?"));
+  }, []);
 
   return (
     <aside className="sidebar">
-      {/* Logo */}
       <div className="sidebar-logo-area">
         <img className="sidebar-logo-img" src={iconImg} alt="Modstack" />
         <div>
@@ -26,9 +34,8 @@ export default function Sidebar({ javaVersion, diskSpace }: Props) {
         </div>
       </div>
 
-      <div className="sidebar-ver">v1.1.5</div>
+      <div className="sidebar-ver">v{version}</div>
 
-      {/* System info */}
       <div className="sidebar-section-label">{t.sidebar.system}</div>
       <div className="sidebar-info-row">
         <span>{t.sidebar.os}</span>
@@ -54,7 +61,6 @@ export default function Sidebar({ javaVersion, diskSpace }: Props) {
 
       <div className="sidebar-spacer" />
 
-      {/* Bottom: Discord + LangSelector */}
       <div className="sidebar-bottom">
         <button
           className="sidebar-discord-btn"

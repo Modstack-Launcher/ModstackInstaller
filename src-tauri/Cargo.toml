@@ -1,6 +1,6 @@
 [package]
 name = "modstack-installer"
-version = "1.0.1"
+version = "1.0.0"
 description = "Modstack Launcher Installer"
 authors = ["Modstack Team"]
 edition = "2021"
