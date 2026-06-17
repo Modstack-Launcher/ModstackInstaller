@@ -9,12 +9,7 @@ pub async fn detect_or_install_java(
         return Ok(java);
     }
 
-    let bundled = install_path.join("runtime").join(if cfg!(target_os = "windows") {
-        "bin/java.exe"
-    } else {
-        "bin/java"
-    });
-
+    let bundled = install_path.join("runtime").join("bin/java.exe");
     if bundled.exists() {
         return Ok(bundled);
     }
@@ -22,37 +17,24 @@ pub async fn detect_or_install_java(
     Err("Java 21+ not found. The launcher will download it on first run.".to_string())
 }
 
-fn find_system_java() -> Option<PathBuf> {
-    #[cfg(target_os = "windows")]
-    {
-        let candidates = [
-            std::env::var("JAVA_HOME").ok().map(|h| PathBuf::from(h).join("bin/java.exe")),
-            Some(PathBuf::from("C:/Program Files/Eclipse Adoptium/jdk-21/bin/java.exe")),
-            Some(PathBuf::from("C:/Program Files/Java/jdk-21/bin/java.exe")),
-            Some(PathBuf::from("C:/Program Files/Microsoft/jdk-21.0.0.35-hotspot/bin/java.exe")),
-        ];
-        for candidate in candidates.into_iter().flatten() {
-            if candidate.exists() {
-                if let Ok(v) = get_java_version(&candidate) {
-                    if v >= 21 {
-                        return Some(candidate);
-                    }
-                }
-            }
-        }
-    }
+/// Returns the major version of a system-installed Java 21+ if present (e.g. "21").
+pub fn detect_java_version() -> Option<String> {
+    let java = find_system_java()?;
+    get_java_version(&java).ok().map(|v| v.to_string())
+}
 
-    #[cfg(any(target_os = "macos", target_os = "linux"))]
-    {
-        for name in &["java", "java21"] {
-            if let Ok(output) = std::process::Command::new("which").arg(name).output() {
-                if output.status.success() {
-                    let path = PathBuf::from(String::from_utf8_lossy(&output.stdout).trim());
-                    if let Ok(v) = get_java_version(&path) {
-                        if v >= 21 {
-                            return Some(path);
-                        }
-                    }
+fn find_system_java() -> Option<PathBuf> {
+    let candidates = [
+        std::env::var("JAVA_HOME").ok().map(|h| PathBuf::from(h).join("bin/java.exe")),
+        Some(PathBuf::from("C:/Program Files/Eclipse Adoptium/jdk-21/bin/java.exe")),
+        Some(PathBuf::from("C:/Program Files/Java/jdk-21/bin/java.exe")),
+        Some(PathBuf::from("C:/Program Files/Microsoft/jdk-21.0.0.35-hotspot/bin/java.exe")),
+    ];
+    for candidate in candidates.into_iter().flatten() {
+        if candidate.exists() {
+            if let Ok(v) = get_java_version(&candidate) {
+                if v >= 21 {
+                    return Some(candidate);
                 }
             }
         }

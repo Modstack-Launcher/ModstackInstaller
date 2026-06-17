@@ -3,7 +3,7 @@ mod installer;
 mod java;
 
 use commands::{
-    close_installer, get_default_install_dir, get_disk_space, get_launcher_size,
+    close_installer, get_default_install_dir, get_disk_space, get_java_version, get_launcher_size,
     launch_modstack, open_url, run_installation, run_repair, run_uninstall, get_installed_dir,
 };
 
@@ -18,6 +18,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_default_install_dir,
             get_disk_space,
+            get_java_version,
             get_launcher_size,
             run_installation,
             launch_modstack,

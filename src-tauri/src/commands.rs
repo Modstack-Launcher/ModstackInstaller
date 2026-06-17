@@ -1,34 +1,14 @@
 use std::path::PathBuf;
 use tauri::{AppHandle, Emitter};
 
-use crate::installer::{run_install, fetch_release_asset};
-use crate::java::detect_or_install_java;
+use crate::installer::{run_install, fetch_release_asset, get_installed_dir_from_registry};
+use crate::java::{detect_or_install_java, detect_java_version};
 
 #[tauri::command]
 pub fn get_default_install_dir() -> String {
-    #[cfg(target_os = "windows")]
-    {
-        let local_app_data = std::env::var("LOCALAPPDATA")
-            .unwrap_or_else(|_| "C:\\Users\\User\\AppData\\Local".to_string());
-        return format!("{}\\Modstack App", local_app_data);
-    }
-
-    #[cfg(target_os = "macos")]
-    {
-        let home = dirs::home_dir().unwrap_or_else(|| PathBuf::from("/Users/user"));
-        return home.join("Applications").join("Modstack App")
-            .to_string_lossy().to_string();
-    }
-
-    #[cfg(target_os = "linux")]
-    {
-        let home = dirs::home_dir().unwrap_or_else(|| PathBuf::from("/home/user"));
-        return home.join(".local").join("share").join("modstack-app")
-            .to_string_lossy().to_string();
-    }
-
-    #[allow(unreachable_code)]
-    String::from("/opt/modstack")
+    let local_app_data = std::env::var("LOCALAPPDATA")
+        .unwrap_or_else(|_| "C:\\Users\\User\\AppData\\Local".to_string());
+    format!("{}\\Modstack App", local_app_data)
 }
 
 #[tauri::command]
@@ -47,44 +27,24 @@ pub fn get_disk_space(path: String) -> Result<String, String> {
         }
     };
 
-    #[cfg(target_os = "windows")]
-    {
-        use std::os::windows::ffi::OsStrExt;
-        let path_wide: Vec<u16> = std::ffi::OsStr::new(&existing)
-            .encode_wide()
-            .chain(std::iter::once(0))
-            .collect();
-        let mut free_bytes: u64 = 0;
-        let ret = unsafe {
-            windows_sys::Win32::Storage::FileSystem::GetDiskFreeSpaceExW(
-                path_wide.as_ptr(),
-                &mut free_bytes,
-                std::ptr::null_mut(),
-                std::ptr::null_mut(),
-            )
-        };
-        if ret == 0 {
-            return Err("Could not read disk space".to_string());
-        }
-        return Ok(format_bytes(free_bytes));
-    }
-
-    #[cfg(any(target_os = "macos", target_os = "linux"))]
-    {
-        use std::mem::MaybeUninit;
-        let path_cstr = std::ffi::CString::new(existing).map_err(|e| e.to_string())?;
-        let mut stat: MaybeUninit<libc::statvfs> = MaybeUninit::uninit();
-        let ret = unsafe { libc::statvfs(path_cstr.as_ptr(), stat.as_mut_ptr()) };
-        if ret == 0 {
-            let stat = unsafe { stat.assume_init() };
-            let free_bytes = stat.f_bavail as u64 * stat.f_bsize as u64;
-            return Ok(format_bytes(free_bytes));
-        }
+    use std::os::windows::ffi::OsStrExt;
+    let path_wide: Vec<u16> = std::ffi::OsStr::new(&existing)
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+    let mut free_bytes: u64 = 0;
+    let ret = unsafe {
+        windows_sys::Win32::Storage::FileSystem::GetDiskFreeSpaceExW(
+            path_wide.as_ptr(),
+            &mut free_bytes,
+            std::ptr::null_mut(),
+            std::ptr::null_mut(),
+        )
+    };
+    if ret == 0 {
         return Err("Could not read disk space".to_string());
     }
-
-    #[allow(unreachable_code)]
-    Ok("Unknown".to_string())
+    Ok(format_bytes(free_bytes))
 }
 
 fn format_bytes(bytes: u64) -> String {
@@ -95,6 +55,11 @@ fn format_bytes(bytes: u64) -> String {
     } else {
         format!("{} MB libres", bytes / MB)
     }
+}
+
+#[tauri::command]
+pub fn get_java_version() -> Option<String> {
+    detect_java_version()
 }
 
 #[tauri::command]
@@ -122,14 +87,6 @@ pub async fn run_installation(
     let log = |text: &str, kind: &str| {
         let _ = app.emit("install-log", serde_json::json!({ "text": text, "kind": kind }));
     };
-
-    #[cfg(not(target_os = "windows"))]
-    {
-        emit(5, "Creando directorio de instalacion...");
-        log(&format!("Creando directorio: {}", install_dir), "info");
-        std::fs::create_dir_all(&install_path).map_err(|e| e.to_string())?;
-        log("Directorio creado", "ok");
-    }
 
     emit(15, "Verificando Java...");
     log("Buscando Java 21+...", "info");
@@ -168,17 +125,10 @@ pub async fn run_installation(
 #[tauri::command]
 pub fn launch_modstack(install_dir: String) -> Result<(), String> {
     let install_path = PathBuf::from(&install_dir);
-
-    #[cfg(target_os = "windows")]
     let exe = install_path.join("ModstackApp.exe");
-    #[cfg(target_os = "macos")]
-    let exe = install_path.join("modstack.app/Contents/MacOS/modstack");
-    #[cfg(target_os = "linux")]
-    let exe = install_path.join("modstack");
 
     if !exe.exists() {
-        #[cfg(target_os = "windows")]
-        if let Some(reg_path) = crate::installer::get_installed_dir_from_registry() {
+        if let Some(reg_path) = get_installed_dir_from_registry() {
             let reg_exe = reg_path.join("ModstackApp.exe");
             if reg_exe.exists() {
                 return std::process::Command::new(&reg_exe)
@@ -208,30 +158,15 @@ pub fn close_installer(app: AppHandle) {
 
 #[tauri::command]
 pub fn open_url(url: String) -> Result<(), String> {
-    #[cfg(target_os = "windows")]
     std::process::Command::new("cmd")
         .args(["/C", "start", "", &url])
         .spawn()
         .map_err(|e| e.to_string())?;
-
-    #[cfg(target_os = "macos")]
-    std::process::Command::new("open")
-        .arg(&url)
-        .spawn()
-        .map_err(|e| e.to_string())?;
-
-    #[cfg(target_os = "linux")]
-    std::process::Command::new("xdg-open")
-        .arg(&url)
-        .spawn()
-        .map_err(|e| e.to_string())?;
-
     Ok(())
 }
+
 #[tauri::command]
 pub async fn run_repair(app: AppHandle) -> Result<(), String> {
-    use crate::installer::get_installed_dir_from_registry;
-
     let emit = |progress: u32, task: &str| {
         let _ = app.emit("install-progress", serde_json::json!({ "progress": progress, "task": task }));
     };
@@ -269,8 +204,6 @@ pub async fn run_repair(app: AppHandle) -> Result<(), String> {
 
 #[tauri::command]
 pub async fn run_uninstall(app: AppHandle) -> Result<(), String> {
-    use crate::installer::get_installed_dir_from_registry;
-
     let emit = |progress: u32, task: &str| {
         let _ = app.emit("install-progress", serde_json::json!({ "progress": progress, "task": task }));
     };
@@ -300,7 +233,6 @@ pub async fn run_uninstall(app: AppHandle) -> Result<(), String> {
     log("Archivos eliminados.", "ok");
     emit(70, "Limpiando entradas del registro...");
 
-    #[cfg(target_os = "windows")]
     {
         use winreg::enums::*;
         use winreg::RegKey;
@@ -336,6 +268,5 @@ pub async fn run_uninstall(app: AppHandle) -> Result<(), String> {
 
 #[tauri::command]
 pub fn get_installed_dir() -> Option<String> {
-    use crate::installer::get_installed_dir_from_registry;
     get_installed_dir_from_registry().map(|p| p.to_string_lossy().to_string())
 }

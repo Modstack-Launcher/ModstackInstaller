@@ -24,7 +24,6 @@ pub async fn fetch_release_asset(client: &reqwest::Client) -> Result<ReleaseAsse
         .as_array()
         .ok_or("No assets found in release")?;
 
-    #[cfg(target_os = "windows")]
     let asset = assets
         .iter()
         .find(|a| {
@@ -34,18 +33,6 @@ pub async fn fetch_release_asset(client: &reqwest::Client) -> Result<ReleaseAsse
                 .unwrap_or(false)
         })
         .ok_or("No modstack-setup.exe asset found in release")?;
-
-    #[cfg(target_os = "macos")]
-    let asset = assets
-        .iter()
-        .find(|a| a["name"].as_str().map(|n| n == "modstack.dmg").unwrap_or(false))
-        .ok_or("No modstack.dmg asset found in release")?;
-
-    #[cfg(target_os = "linux")]
-    let asset = assets
-        .iter()
-        .find(|a| a["name"].as_str().map(|n| n == "modstack.AppImage").unwrap_or(false))
-        .ok_or("No modstack.AppImage asset found in release")?;
 
     Ok(ReleaseAsset {
         file_name: asset["name"].as_str().ok_or("Missing asset name")?.to_string(),
@@ -57,7 +44,6 @@ pub async fn fetch_release_asset(client: &reqwest::Client) -> Result<ReleaseAsse
     })
 }
 
-#[cfg(target_os = "windows")]
 pub fn get_installed_dir_from_registry() -> Option<std::path::PathBuf> {
     use winreg::enums::*;
     use winreg::RegKey;
@@ -134,7 +120,6 @@ where
     }
     drop(file);
 
-    #[cfg(target_os = "windows")]
     {
         use std::os::windows::process::CommandExt;
 
@@ -212,58 +197,6 @@ where
         progress(99, "Casi listo...");
         std::thread::sleep(std::time::Duration::from_millis(500));
 
-        return Ok(real_path);
+        Ok(real_path)
     }
-
-    #[cfg(target_os = "macos")]
-    {
-        progress(90, "Montando imagen de disco...");
-        std::process::Command::new("hdiutil")
-            .args(["attach", "-nobrowse", "-quiet", &dest_path.to_string_lossy()])
-            .output()
-            .map_err(|e| format!("hdiutil failed: {}", e))?;
-
-        let app_src = std::path::Path::new("/Volumes/modstack/modstack.app");
-        let app_dst = install_path.join("modstack.app");
-        if app_src.exists() {
-            copy_dir_all(app_src, &app_dst)?;
-            let _ = std::process::Command::new("hdiutil")
-                .args(["detach", "/Volumes/modstack", "-quiet"])
-                .output();
-        } else {
-            let _ = std::process::Command::new("hdiutil")
-                .args(["detach", "/Volumes/modstack", "-quiet"])
-                .output();
-            return Err("Could not find modstack.app in mounted image".to_string());
-        }
-        let _ = std::fs::remove_file(&dest_path);
-    }
-
-    #[cfg(target_os = "linux")]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        let appimage_dest = install_path.join("modstack");
-        if dest_path != appimage_dest {
-            std::fs::rename(&dest_path, &appimage_dest)
-                .map_err(|e| format!("Failed to move AppImage: {}", e))?;
-        }
-        std::fs::set_permissions(&appimage_dest, std::fs::Permissions::from_mode(0o755))
-            .map_err(|e| format!("Failed to chmod AppImage: {}", e))?;
-    }
-}
-
-#[cfg(target_os = "macos")]
-fn copy_dir_all(src: &Path, dst: &Path) -> Result<(), String> {
-    std::fs::create_dir_all(dst).map_err(|e| e.to_string())?;
-    for entry in std::fs::read_dir(src).map_err(|e| e.to_string())? {
-        let entry = entry.map_err(|e| e.to_string())?;
-        let ty = entry.file_type().map_err(|e| e.to_string())?;
-        let dest = dst.join(entry.file_name());
-        if ty.is_dir() {
-            copy_dir_all(&entry.path(), &dest)?;
-        } else {
-            std::fs::copy(entry.path(), dest).map_err(|e| e.to_string())?;
-        }
-    }
-    Ok(())
 }

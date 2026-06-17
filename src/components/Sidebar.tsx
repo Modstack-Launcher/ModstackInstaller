@@ -11,9 +11,9 @@ interface Props {
   diskSpace?: string;
 }
 
-export default function Sidebar({ os, javaVersion, diskSpace }: Props) {
+export default function Sidebar({ javaVersion, diskSpace }: Props) {
   const { t } = useTranslation();
-  const osLabel = os === "windows" ? "Windows" : os === "macos" ? "macOS" : os ?? "—";
+  const osLabel = "Windows";
 
   return (
     <aside className="sidebar">
